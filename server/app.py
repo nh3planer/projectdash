@@ -1,8 +1,6 @@
 import hmac
-import json
 import os
 import secrets
-import sqlite3
 import sys
 
 from fastapi import FastAPI, HTTPException, Request
@@ -12,7 +10,23 @@ from pydantic import BaseModel
 from server import auth
 from server.database import CentralDB, TABLES, utcnow
 
-DB_PATH = os.environ.get("PROJECTDASH_DB", os.path.join(os.path.dirname(__file__), "..", "data", "central.db"))
+
+def _default_db_path():
+    if getattr(sys, "frozen", False):
+        base = os.path.dirname(sys.executable)
+    else:
+        env_base = os.environ.get("PROJECTDASH_DB")
+        if env_base:
+            return env_base
+        base = os.path.join(os.path.dirname(__file__), "..")
+    return os.path.join(base, "data", "central.db")
+
+
+def _db_port():
+    return int(os.environ.get("PROJECTDASH_PORT", "8750"))
+
+
+DB_PATH = _default_db_path()
 os.makedirs(os.path.dirname(DB_PATH), exist_ok=True)
 db = CentralDB(DB_PATH)
 
@@ -256,7 +270,10 @@ async def change_password(req: PasswordChange, request: Request):
 
 def main():
     import uvicorn
-    port = int(sys.argv[1]) if len(sys.argv) > 1 else 8750
+    port = int(sys.argv[1]) if len(sys.argv) > 1 else _db_port()
+    print(f"ProjectDash-Server läuft auf Port {port}")
+    print(f"Datenbank: {DB_PATH}")
+    print("Server mit Strg+C beenden.")
     uvicorn.run(app, host="0.0.0.0", port=port)
 
 

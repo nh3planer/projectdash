@@ -65,6 +65,42 @@ Beim ersten Start: **Server-URL**, Benutzer und Passwort im Login-Dialog eingebe
 python tests/test_pipeline.py
 ```
 
+## Schnelltest ohne Installation (2 Minuten)
+
+Auf einem Rechner (im Netzwerk der späteren Benutzer):
+
+```bash
+pip install -r requirements.txt
+python run_server.py        # Terminal 1: zentraler Server, Port 8750
+python run_client.py       # Terminal 2: Desktop-Oberfläche
+```
+
+Im Login-Dialog des Clients als Server `http://<Adresse des Server-PCs>:8750` eintragen – auf demselben Rechner `http://localhost:8750`. Dann nacheinander mit den Demo-Benutzern (siehe Tabelle unten) einloggen und die unterschiedlichen Rechte ausprobieren:
+
+- `admin` / `admin` – alles inkl. Benutzerverwaltung (Seite „Benutzer & Rechte")
+- `geschaeftsfuehrung` / `management123` – zusätzlich das Management-Cockpit mit den vertraulichen KPIs
+- `kaltenbrunn` / `projekt123` – Projektleitung: Projekte bearbeiten, Kosten, Import/Export – **ohne** Management-Cockpit
+- `froster` / `mitarbeit123` – Mitarbeiter: kostenfreie Ansicht, Management und Kosten bleiben verborgen
+- `gast` / `gast123` – nur Projektliste
+
+Doppelklick auf eine Projektzeile öffnet das Projektdetail (Gantt, Meilensteine, Kosten, Stunden, PDF-Report).
+
+> Wichtig für den produktiven Betrieb: beim ersten Login die Standard-Passwörter über „Passwort ändern“ ersetzen bzw. als Admin neue Benutzer anlegen.
+
+## Windows-Exe / Installer erstellen
+
+Windows-Exe-Dateien müssen auf einem **Windows-Rechner** gebaut werden (einmalig, ca. 5 Minuten):
+
+1. Dieses Repository auf einem Windows-PC klonen/herunterladen
+2. `build\build_windows.bat` **doppelklicken** – erzeugt im Ordner `dist`:
+   - `ProjectDashServer.exe` (einmalig auf dem zentralen Server-PC, Port 8750)
+   - `ProjectDashClient.exe` (auf jeden Mitarbeiter-PC kopieren, kein Python nötig)
+3. Optional ein echtes Setup-Programm bauen: [Inno Setup 6](https://jrsoftware.org/isinfo.php) installieren und `build\installer.iss` kompilieren → ergibt `Setup\ProjectDashSetup.exe` mit Startmenü-Einträgen und Desktop-Symbol
+
+Die Server-Datenbank `data\central.db` wird beim ersten Start **neben der Exe** angelegt und automatisch mit den 10 Beispielprojekten befüllt. Server-Port lässt sich über die Umgebungsvariable `PROJECTDASH_PORT` ändern, der Datenbankpfad über `PROJECTDASH_DB`.
+
+> Sicherheitshinweis: Der Server ist für das interne Netzwerk gedacht. Beim ersten produktiven Einsatz die Demo-Benutzer prüfen/deaktivieren (als Admin unter „Benutzer & Rechte“) und den Server nicht ohne zusätzliche Absicherung (VPN/HTTPS-Reverse-Proxy) aus dem Internet erreichbar machen.
+
 ---
 
 ## Architektur
