@@ -17,6 +17,16 @@ if errorlevel 1 (
     exit /b 1
 )
 
+python -c "import sys; sys.exit(0 if sys.version_info >= (3,10) else 1)" >nul 2>nul
+if errorlevel 1 (
+    echo  FEHLER: Python 3.10 oder neuer erforderlich.
+    echo  Gefunden:
+    python --version
+    echo  Bitte Python 3.10+ installieren, z.B. 3.12 von https://www.python.org/downloads/
+    pause
+    exit /b 1
+)
+
 python -m venv .venv-build 2>nul
 call .venv-build\Scripts\activate.bat
 
