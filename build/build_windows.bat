@@ -39,11 +39,11 @@ if errorlevel 1 (
 )
 
 echo  Erzeuge ProjectDashServer.exe ...
-pyinstaller --clean --noconfirm --distpath dist --workpath build\work-server --specpath build build\projectdash_server.spec
+pyinstaller --clean --noconfirm --distpath dist --workpath build\work-server build\projectdash_server.spec
 if errorlevel 1 ( echo  FEHLER beim Server-Build & pause & exit /b 1 )
 
 echo  Erzeuge ProjectDashClient.exe ...
-pyinstaller --clean --noconfirm --distpath dist --workpath build\work-client --specpath build build\projectdash_client.spec
+pyinstaller --clean --noconfirm --distpath dist --workpath build\work-client build\projectdash_client.spec
 if errorlevel 1 ( echo  FEHLER beim Client-Build & pause & exit /b 1 )
 
 echo.

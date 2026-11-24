@@ -24,10 +24,10 @@ jobs:
           pip install -r requirements.txt pyinstaller
 
       - name: ProjectDashServer.exe bauen
-        run: pyinstaller --clean --noconfirm --distpath dist --workpath build/work-server --specpath build build/projectdash_server.spec
+        run: pyinstaller --clean --noconfirm --distpath dist --workpath build/work-server build/projectdash_server.spec
 
       - name: ProjectDashClient.exe bauen
-        run: pyinstaller --clean --noconfirm --distpath dist --workpath build/work-client --specpath build build/projectdash_client.spec
+        run: pyinstaller --clean --noconfirm --distpath dist --workpath build/work-client build/projectdash_client.spec
 
       - name: Exe-Dateien prüfen
         run: |
