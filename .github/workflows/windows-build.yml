@@ -1,0 +1,50 @@
+name: Windows EXE Build
+
+on:
+  push:
+    branches: ["main", "vibe/**"]
+  pull_request:
+  workflow_dispatch:
+
+jobs:
+  build-windows:
+    runs-on: windows-latest
+    permissions:
+      contents: write
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Abhängigkeiten installieren
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt pyinstaller
+
+      - name: ProjectDashServer.exe bauen
+        run: pyinstaller --clean --noconfirm --distpath dist --workpath build/work-server --specpath build build/projectdash_server.spec
+
+      - name: ProjectDashClient.exe bauen
+        run: pyinstaller --clean --noconfirm --distpath dist --workpath build/work-client --specpath build build/projectdash_client.spec
+
+      - name: Exe-Dateien prüfen
+        run: |
+          if (-Not (Test-Path "dist/ProjectDashServer.exe")) { throw "ProjectDashServer.exe fehlt" }
+          if (-Not (Test-Path "dist/ProjectDashClient.exe")) { throw "ProjectDashClient.exe fehlt" }
+          Get-ChildItem dist
+
+      - name: Build-Artefakt hochladen
+        uses: actions/upload-artifact@v4
+        with:
+          name: ProjectDash-Windows
+          path: dist/*.exe
+          retention-days: 30
+
+      - name: Release bei Tag erstellen
+        if: startsWith(github.ref, 'refs/tags/v')
+        run: |
+          gh release create ${{ github.ref_name }} dist/*.exe --title "ProjectDash ${{ github.ref_name }}" --generate-notes
+        env:
+          GH_TOKEN: ${{ github.token }}
