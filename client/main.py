@@ -189,7 +189,7 @@ class MainWindow(QMainWindow):
             btn.setObjectName("navBtn")
             btn.setCheckable(True)
             btn.clicked.connect(lambda _, k=key: self.goto(k))
-            self.nav_buttons[k] = btn
+            self.nav_buttons[key] = btn
             side_layout.addWidget(btn)
         side_layout.addStretch(1)
         user_box = QVBoxLayout()

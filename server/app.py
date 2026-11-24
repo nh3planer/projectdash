@@ -1,6 +1,7 @@
 import hmac
 import os
 import secrets
+import sqlite3
 import sys
 
 from fastapi import FastAPI, HTTPException, Request
